@@ -91,3 +91,36 @@ Here's a high-level outline of the steps involved:
    In this example, we're using `ffmpeg` to copy all streams from the input video except for the identified audio stream.
 
 Make sure to adjust the stream index and file paths according to your specific needs. Additionally, error handling and further customization can be added as required for your use case.
+
+Compressing a PDF file significantly without quality loss is a challenging task because PDFs are typically designed for preserving the quality of their content. However, you can try some methods to reduce the file size using Python and subprocess without causing significant quality loss.
+
+One approach is to convert the PDF to an image format (like JPEG) with reduced DPI (dots per inch) for images, and then recompile those images into a PDF. Here's a Python script that uses Ghostscript (which you can run via subprocess) to achieve this:
+
+```python
+import subprocess
+
+# Input and output file names
+input_pdf = "input.pdf"
+output_pdf = "output.pdf"
+
+# Use Ghostscript to convert PDF to images
+subprocess.run(["gs", "-dNOPAUSE", "-sDEVICE=jpeg", "-r150", "-o", "temp_page%d.jpg", input_pdf])
+
+# Use Ghostscript to create a PDF from the compressed images
+subprocess.run(["gs", "-dNOPAUSE", "-sDEVICE=pdfwrite", "-o", output_pdf, "temp_page*.jpg"])
+
+# Remove temporary image files
+subprocess.run(["rm", "temp_page*.jpg"])
+```
+
+In this script:
+
+- `gs` is Ghostscript, a powerful tool for working with PDFs.
+- We first convert the input PDF to a series of JPEG images with reduced DPI (150 in this example).
+- Then, we use Ghostscript again to compile those images back into a PDF.
+
+Adjust the DPI value (in this case, 150) as needed for your specific requirements. Note that while this approach can reduce file size significantly, it may result in some quality loss, especially for text and vector elements.
+
+Remember to install Ghostscript on your system and ensure that it's available in your PATH for this script to work.
+
+Keep in mind that the effectiveness of this compression method depends on the content of the PDF, and some quality loss may occur, particularly with complex vector graphics and text.
