@@ -124,3 +124,42 @@ Adjust the DPI value (in this case, 150) as needed for your specific requirement
 Remember to install Ghostscript on your system and ensure that it's available in your PATH for this script to work.
 
 Keep in mind that the effectiveness of this compression method depends on the content of the PDF, and some quality loss may occur, particularly with complex vector graphics and text.
+
+
+To extract all streams from a multimedia file and save each stream in a separate file using Python, you can use the `ffmpeg` and `ffprobe` tools with the `subprocess` module. Here's a basic example:
+
+```python
+import subprocess
+import json
+
+input_file = 'input.mp4'
+
+# Use ffprobe to get stream information
+ffprobe_cmd = ['ffprobe', '-v', 'error', '-select_streams', 'a', '-show_entries', 'stream=codec_name', '-of', 'json', input_file]
+ffprobe_output = subprocess.check_output(ffprobe_cmd).decode('utf-8')
+streams_info = json.loads(ffprobe_output)
+
+# Iterate through the streams and extract each one
+for index, stream in enumerate(streams_info['streams']):
+    stream_index = stream['index']
+    codec_name = stream['codec_name']
+
+    # Use ffmpeg to extract the stream
+    output_file = f'output_stream_{index}.{codec_name}'
+    ffmpeg_cmd = ['ffmpeg', '-i', input_file, '-map', f'0:{stream_index}', output_file]
+    subprocess.run(ffmpeg_cmd)
+
+print("All streams extracted and saved.")
+```
+
+In this code:
+
+1. We use `ffprobe` to get information about all streams in the input file (e.g., audio and video streams).
+
+2. We then iterate through the stream information and use `ffmpeg` to extract each stream by specifying the stream index.
+
+3. The extracted streams are saved in separate files named according to their stream index and codec name.
+
+Make sure you have both `ffmpeg` and `ffprobe` installed on your system, and adjust the `input_file` variable to point to your input multimedia file.
+
+Please note that this is a basic example, and you may need to customize it further based on your specific needs and error handling requirements. Additionally, this code assumes that the input file contains audio and video streams, so you might need to adapt it if you're working with other types of streams.
