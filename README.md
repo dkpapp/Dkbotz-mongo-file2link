@@ -163,3 +163,25 @@ In this code:
 Make sure you have both `ffmpeg` and `ffprobe` installed on your system, and adjust the `input_file` variable to point to your input multimedia file.
 
 Please note that this is a basic example, and you may need to customize it further based on your specific needs and error handling requirements. Additionally, this code assumes that the input file contains audio and video streams, so you might need to adapt it if you're working with other types of streams.
+
+**Certainly! You can use FFmpeg to remove a particular stream (video, audio, or subtitles) by its index using the `-map` option. Here's an example of how to do it:
+
+To remove a specific video stream by its index:
+```shell
+ffmpeg -i input.mp4 -map 0 -map -0:v:1 -c copy output.mp4
+```
+In this command, replace `input.mp4` with your input file, and `-0:v:1` represents the second video stream (indexes start from 0).
+
+To remove a specific audio stream by its index:
+```shell
+ffmpeg -i input.mp4 -map 0 -map -0:a:2 -c copy output.mp4
+```
+In this command, replace `input.mp4` with your input file, and `-0:a:2` represents the third audio stream (indexes start from 0).
+
+To remove a specific subtitle stream by its index:
+```shell
+ffmpeg -i input.mkv -map 0 -map -0:s:0 -c copy output.mkv
+```
+In this command, replace `input.mkv` with your input file, and `-0:s:0` represents the first subtitle stream (indexes start from 0).
+
+Make sure to adjust the input and output filenames and the index you want to remove based on your specific needs. The `-c copy` option is used to copy the remaining streams without re-encoding, which is generally faster and preserves the original quality.**
